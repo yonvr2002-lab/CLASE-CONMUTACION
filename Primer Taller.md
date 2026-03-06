@@ -1,8 +1,8 @@
 # Título de su Informe
 
-**Autores:** [Tu Nombre] y [Nombre de tu compañero]
+**Autores:** Valentina Diaz, Yon Valdez y Oscar Rada
 **Fecha:** 5 de marzo de 2026
-**Materia / Proyecto:** [Nombre de la materia o proyecto]
+**Materia / Proyecto:** Comnutacion y Teletrafico
 
 ---
 
