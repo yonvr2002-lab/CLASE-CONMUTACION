@@ -128,5 +128,105 @@ MAC: MAC del contenedor2
 
 Esto permite que futuras comunicaciones se realicen más rápido sin necesidad de volver a enviar una solicitud ARP.
 
+PUNTO 3
+
+Escenario
+Se utilizará la misma red y contenedores creados en el ejercicio anterior:
+
+Red Docker: red_arp
+Contenedores: contenedor1 y contenedor2
+
+Ambos deben poder comunicarse entre sí mediante el comando ping.
+Preparación de Wireshark
+1. Abrir Wireshark con permisos de administrador.
+2. Seleccionar la interfaz llamada docker0.
+3. Aplicar el filtro de captura:
+
+icmp
+
+Esto permitirá observar únicamente los paquetes ICMP generados por el comando ping.
+Procedimiento sin perturbación
+1. Iniciar la captura en Wireshark.
+2. Desde contenedor1 ejecutar el siguiente comando:
+
+ping -c 10 172.17.0.3
+
+3. Este comando envía 10 paquetes ICMP al contenedor2.
+4. Cada solicitud enviada se llama Echo Request y cada respuesta recibida Echo Reply.
+5. Detener la captura después de que finalicen los 10 paquetes.
+Análisis de paquetes ICMP
+En Wireshark se pueden observar los paquetes ICMP capturados.
+
+Cada paquete tiene un número de secuencia y un tiempo de respuesta. 
+El tiempo entre el Echo Request y el Echo Reply corresponde al RTT (Round Trip Time).
+
+Esta información se puede observar directamente en la columna llamada "Time" dentro de Wireshark.
+
+A partir de estos valores se puede calcular el RTT promedio y verificar si existe variación entre los tiempos de respuesta.
+Introducción de jitter (perturbación)
+Para simular variaciones en la red se introduce un retraso artificial usando la herramienta tc.
+
+En el host ejecutar:
+
+sudo tc qdisc add dev docker0 root netem delay 50ms 20ms distribution normal
+
+Este comando añade:
+- Un retardo promedio de 50 ms
+- Una variación de 20 ms (jitter) en el tráfico que pasa por la interfaz docker0.
+Prueba con perturbación
+Después de aplicar la perturbación se vuelve a ejecutar la prueba de conectividad.
+
+Desde contenedor1 ejecutar:
+
+ping -c 20 172.17.0.3
+
+Mientras se ejecuta el ping se debe iniciar nuevamente la captura en Wireshark para observar los nuevos paquetes ICMP con variación en los tiempos de respuesta.
+Eliminar la configuración de jitter
+Después de terminar la prueba se debe eliminar la configuración aplicada con tc ejecutando:
+
+sudo tc qdisc del dev docker0 root
+Análisis y respuestas
+1. Comparar los RTT de las dos capturas
+
+En la primera captura (sin perturbación) los valores de RTT son más estables y tienen poca variación.
+
+En la segunda captura, después de aplicar el comando tc, se observa una mayor variabilidad en los tiempos de respuesta. Esto ocurre porque se introdujo un retraso artificial con jitter, lo que provoca que cada paquete tenga un tiempo diferente.
+
+Por lo tanto, sí se observa una mayor variabilidad en la segunda captura.
+
+2. Cálculo del jitter
+
+El jitter se puede calcular como la diferencia entre los tiempos RTT consecutivos.
+
+Por ejemplo:
+RTT1 = 1.2 ms
+RTT2 = 1.8 ms
+
+Jitter = |RTT2 - RTT1| = 0.6 ms
+
+Esto permite medir cuánto varía el tiempo de respuesta entre paquetes consecutivos.
+
+3. Explicación de latencia y jitter
+
+Latencia:
+La latencia es el tiempo que tarda un paquete en viajar desde el origen hasta el destino y regresar nuevamente. En redes se mide normalmente usando el RTT obtenido con el comando ping.
+
+Factores que pueden causar latencia:
+- Distancia entre dispositivos
+- Congestión de red
+- Procesamiento en routers o switches
+- Calidad de la conexión
+
+Jitter:
+El jitter es la variación en el tiempo de llegada de los paquetes. Esto significa que algunos paquetes pueden tardar más o menos tiempo que otros.
+
+El jitter es especialmente importante en aplicaciones en tiempo real como:
+- VoIP (llamadas por internet)
+- Videollamadas
+- Juegos en línea
+
+Si el jitter es muy alto, la comunicación puede presentar cortes, retrasos o pérdida de calidad en audio y video.
+
+
 
 
