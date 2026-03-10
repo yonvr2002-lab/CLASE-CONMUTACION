@@ -5,6 +5,23 @@
 **Materia / Proyecto:** Comnutacion y Teletrafico
 
 ---
+<img width="921" height="274" alt="image" src="https://github.com/user-attachments/assets/a8266609-62ed-46aa-ba74-d11c866d6e41" />
+<img width="921" height="508" alt="image" src="https://github.com/user-attachments/assets/ea218fc3-97b2-4a47-a6fc-bcce0c641396" />
+<img width="921" height="503" alt="image" src="https://github.com/user-attachments/assets/c6b14b8f-5934-49a2-8788-42cd056a36a2" />
+<img width="921" height="506" alt="image" src="https://github.com/user-attachments/assets/4e88af04-0811-4731-aec9-2c04969bbd53" />
+<img width="1360" height="404" alt="image" src="https://github.com/user-attachments/assets/a457bbda-a5ee-44a4-8636-26c192e399e7" />
+<img width="1365" height="721" alt="image" src="https://github.com/user-attachments/assets/3dca498a-df41-46d1-b7cf-4403ffd3dead" />
+<img width="1341" height="681" alt="image" src="https://github.com/user-attachments/assets/752974f1-9094-4473-be19-a6cae1178af4" />
+<img width="1186" height="657" alt="image" src="https://github.com/user-attachments/assets/4a807a0f-cf75-415f-8217-136f57338efe" />
+<img width="1305" height="406" alt="image" src="https://github.com/user-attachments/assets/76e305ac-e029-495d-bb72-de1febf5c4c6" />
+
+Gif 1 punto 
+
+
+https://github.com/user-attachments/assets/867a8301-464d-4861-a8fd-558c16ec2516
+
+
+
 PUNTO 2
 
 Paso 1: Crear una red bridge personalizada en Docker
