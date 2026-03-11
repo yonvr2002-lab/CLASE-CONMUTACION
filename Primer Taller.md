@@ -1,144 +1,207 @@
-# Título de su Informe
 
-**Autores:** Valentina Diaz, Yon Valdez y Oscar Rada
+# 📡 Informe de Laboratorio
 
-**Fecha:** 5 de marzo de 2026
+## Docker, ROS, ARP y Análisis de Red
 
-**Materia / Proyecto:** Comnutacion y Teletrafico
+👩‍💻 **Autores:** Valentina Diaz, Yon Valdez y Oscar Rada
+📅 **Fecha:** 5 de marzo de 2026
+📚 **Materia:** Conmutación y Teletráfico
 
 ---
+
+# 📑 Tabla de Contenido
+
+* Punto 1 — Simulación con Docker y ROS
+* Punto 2 — Análisis del Protocolo ARP
+* Punto 3 — Latencia y Jitter
+
+---
+
+# 🧪 PUNTO 1 — Simulación con Docker y ROS
+
+## ▶️ Ejecución de video ASCII en Docker
+
+```bash
+docker run --rm -it wernight/funbox cvlc --no-audio -V caca /examples/countdown.mp4
+```
+
 <img width="921" height="274" alt="image" src="https://github.com/user-attachments/assets/a8266609-62ed-46aa-ba74-d11c866d6e41" />
-¿Qué sucede?
 
-docker run: ejecuta un contenedor.
+### ¿Qué sucede?
 
---rm: elimina el contenedor automáticamente cuando termina.
+| Parámetro               | Función                                              |
+| ----------------------- | ---------------------------------------------------- |
+| docker run              | Ejecuta un contenedor                                |
+| --rm                    | Elimina el contenedor automáticamente cuando termina |
+| -it                     | Permite usar la terminal de forma interactiva        |
+| wernight/funbox         | Imagen de Docker con varias herramientas             |
+| cvlc                    | Versión de VLC para línea de comandos                |
+| --no-audio              | Reproduce el video sin sonido                        |
+| -V caca                 | Usa el driver de video ASCII                         |
+| /examples/countdown.mp4 | Video de ejemplo dentro del contenedor               |
 
--it: modo interactivo en la terminal.
+✅ **Resultado**
 
-wernight/funbox: imagen de Docker que contiene varias herramientas.
+En la terminal aparece un video de cuenta regresiva reproducido con caracteres ASCII (letras y símbolos), simulando una animación hecha con texto.
 
-cvlc: versión de VLC para línea de comandos.
-
---no-audio: reproduce el video sin sonido.
-
--V caca: usa el driver de video ASCII "caca".
-
-/examples/countdown.mp4: video de ejemplo dentro del contenedor.
-
-✅ Resultado:
-En la terminal aparece un video de cuenta regresiva reproducido con caracteres ASCII (letras y símbolos), como si fuera una animación hecha con texto.
 <img width="921" height="508" alt="image" src="https://github.com/user-attachments/assets/ea218fc3-97b2-4a47-a6fc-bcce0c641396" />
-¿Qué sucede?
 
-docker pull: descarga una imagen desde Docker Hub.
+---
 
-osrf/ros: imagen oficial de ROS (Robot Operating System).
+# 🤖 Descarga de ROS con Docker
 
-noetic-desktop-full: versión completa que incluye herramientas gráficas y simuladores.
+```bash
+docker pull osrf/ros:noetic-desktop-full
+```
 
-✅ Resultado:
-Se descarga una imagen de Docker que contiene ROS Noetic y herramientas completas para robótica, incluyendo integración con Gazebo, que permite simular robots en un entorno virtual.
 <img width="921" height="503" alt="image" src="https://github.com/user-attachments/assets/c6b14b8f-5934-49a2-8788-42cd056a36a2" />
-En este paso se crea un Dockerfile llamado Dockerfile-ros que usa la imagen base de ROS Noetic. Luego instala los paquetes necesarios para TurtleBot3 y sus simulaciones, configura el modelo del robot Burger, y finalmente ejecuta un comando que inicia ROS junto con Gazebo para cargar la simulación del robot en un mundo virtual.
+
+### Explicación
+
+| Elemento            | Descripción                                |
+| ------------------- | ------------------------------------------ |
+| docker pull         | Descarga una imagen desde Docker Hub       |
+| osrf/ros            | Imagen oficial de ROS                      |
+| noetic-desktop-full | Versión completa con herramientas gráficas |
+
+✅ **Resultado**
+
+Se descarga una imagen de Docker que contiene ROS Noetic con herramientas completas para robótica, incluyendo integración con Gazebo para simular robots en entornos virtuales.
+
+---
+
+# 🐢 Creación del Dockerfile para ROS
+
+En este paso se crea un archivo **Dockerfile-ros** que utiliza la imagen base de **ROS Noetic**.
+Este archivo instala los paquetes necesarios para **TurtleBot3**, configura el modelo **Burger** y ejecuta ROS junto con Gazebo para iniciar una simulación.
+
 <img width="921" height="506" alt="image" src="https://github.com/user-attachments/assets/4e88af04-0811-4731-aec9-2c04969bbd53" />
+
 <img width="1360" height="404" alt="image" src="https://github.com/user-attachments/assets/a457bbda-a5ee-44a4-8636-26c192e399e7" />
+
 <img width="1365" height="721" alt="image" src="https://github.com/user-attachments/assets/3dca498a-df41-46d1-b7cf-4403ffd3dead" />
-Primero se usa:
 
+---
+
+# 🏗 Construcción de la imagen Docker
+
+```bash
 docker build -t ros-gazebo -f Dockerfile-ros .
+```
 
-Este comando construye una imagen de Docker usando el archivo Dockerfile-ros y la guarda con el nombre ros-gazebo.
+Este comando construye una imagen Docker usando el archivo **Dockerfile-ros** y la guarda con el nombre **ros-gazebo**.
 
-Luego se ejecuta:
+---
 
+# ▶️ Ejecución del contenedor
+
+```bash
 docker run -it --rm \
 --env="DISPLAY" \
 --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
 ros-gazebo
+```
 
-Este comando ejecuta el contenedor creado, permite usar la interfaz gráfica del sistema (DISPLAY) y comparte el sistema gráfico de Linux para que Gazebo pueda abrir su ventana de simulación.
-El contenedor se elimina automáticamente al cerrarse (--rm).
+### Explicación
+
+| Parámetro | Función                              |
+| --------- | ------------------------------------ |
+| DISPLAY   | Permite usar la interfaz gráfica     |
+| X11       | Comparte el sistema gráfico de Linux |
+| --rm      | Elimina el contenedor al cerrarse    |
+
 <img width="1341" height="681" alt="image" src="https://github.com/user-attachments/assets/752974f1-9094-4473-be19-a6cae1178af4" />
-¿Qué sucede en este paso?
 
-En este paso se crea un Dockerfile que prepara un entorno de ROS Noetic con TurtleBot3, LIDAR y SLAM.
+---
 
-El archivo instala los paquetes necesarios como:
+# 🧠 Simulación con SLAM y LIDAR
 
-turtlebot3
+En este paso se crea un Dockerfile que prepara un entorno de **ROS Noetic con TurtleBot3, LIDAR y SLAM**.
 
-turtlebot3-simulations
+Se instalan paquetes como:
 
-slam-gmapping
+* turtlebot3
+* turtlebot3-simulations
+* slam-gmapping
 
-Luego configura el modelo del robot TurtleBot3 Burger y define un comando que inicia ROS y Gazebo.
+Luego se configura el modelo **TurtleBot3 Burger**.
 
-✅ Resultado:
-Cuando se ejecute el contenedor, se abrirá la simulación del robot TurtleBot3 con LIDAR en Gazebo, permitiendo usar SLAM para generar un mapa del entorno en tiempo real.
+✅ **Resultado**
+
+Cuando se ejecuta el contenedor se abre **Gazebo con el robot TurtleBot3**, permitiendo usar SLAM para generar un mapa del entorno en tiempo real.
+
 <img width="1186" height="657" alt="image" src="https://github.com/user-attachments/assets/4a807a0f-cf75-415f-8217-136f57338efe" />
+
 <img width="1305" height="406" alt="image" src="https://github.com/user-attachments/assets/76e305ac-e029-495d-bb72-de1febf5c4c6" />
-En este paso se inicia el contenedor con la simulación del robot.
-Primero se abre Gazebo con el robot TurtleBot3. Luego, en otras terminales del mismo contenedor, se ejecutan:
 
-SLAM (gmapping) para que el robot use el LIDAR y construya un mapa del entorno.
+---
 
-Teleoperación para controlar el robot con el teclado y moverlo por el escenario.
+# 🎮 Control del robot
 
-✅ Resultado: el robot se puede mover en la simulación mientras el sistema SLAM crea el mapa en tiempo real.
+En nuevas terminales del contenedor se ejecutan:
 
-En este paso se abre RViz en otra terminal del contenedor.
+* SLAM (gmapping) para generar el mapa
+* Teleoperación para controlar el robot con el teclado
 
-RViz permite visualizar el mapa que el robot está generando con el LIDAR mientras se mueve en la simulación.
+✅ **Resultado**
 
-✅ Resultado: se puede ver el mapa del entorno formándose en tiempo real a medida que el robot explora el espacio.
+El robot se puede mover en la simulación mientras el sistema SLAM genera un mapa del entorno.
 
-Gif 1 punto 
+---
 
+# 📊 Visualización con RViz
+
+RViz permite visualizar:
+
+* Datos del sensor LIDAR
+* Movimiento del robot
+* Construcción del mapa
+
+✅ **Resultado**
+
+Se puede observar el mapa formándose en tiempo real mientras el robot explora el entorno.
+
+---
+
+🎥 **Gif demostración**
 
 https://github.com/user-attachments/assets/867a8301-464d-4861-a8fd-558c16ec2516
 
+---
 
+# 🌐 PUNTO 2 — Análisis del Protocolo ARP
 
-# PUNTO 2
+## ¿Qué vamos a demostrar?
+
+Cuando un dispositivo quiere comunicarse con otro dentro de la misma red:
+
+1. Conoce la dirección **IP** del otro dispositivo.
+2. No conoce su **dirección MAC**.
+3. Utiliza **ARP (Address Resolution Protocol)** para descubrirla.
+
+El dispositivo envía un mensaje preguntando:
+
+“¿Quién tiene esta IP?”
+
+El dispositivo con esa IP responde indicando su dirección MAC.
+
+Esto se observará utilizando **Wireshark**.
 
 ---
 
-##  1. ¿Qué vamos a demostrar?
+# Requisitos
 
-Cuando un dispositivo quiere comunicarse con otro en la misma red:
+Se debe tener instalado:
 
-1️. Conoce la **IP** del otro dispositivo
+* Docker
+* Wireshark
+* Linux o WSL
 
-2️. Pero **no conoce su dirección MAC**
-
-3️. Entonces usa **ARP (Address Resolution Protocol)** para preguntarle a la red:
-
-> “¿Quién tiene esta IP?”
-
-El dispositivo con esa IP responde:
-
-> “Yo tengo esa IP, mi MAC es esta”.
-
-Esto es exactamente lo que vamos a **ver en Wireshark**.
-
----
-
-## 2. Antes de empezar
-
-Se Debe tener instalado:
-
-* **Docker**
-* **Wireshark**
-* **Linux o WSL**
-
-Verifica Docker:
+Verificación:
 
 ```bash
 docker --version
 ```
-
-Verifica Wireshark:
 
 ```bash
 wireshark
@@ -146,58 +209,27 @@ wireshark
 
 ---
 
-## 3. Crear la red Docker
-
-Primero crearemos una red virtual donde estarán los contenedores.
-
-Ejecuta en la terminal:
+# Crear red Docker
 
 ```bash
 docker network create --driver bridge red_arp
 ```
+
 <img width="921" height="946" alt="image" src="https://github.com/user-attachments/assets/3749bfad-b649-4105-aa05-b17cd7f173c4" />
 
-
-### ¿Qué hace esto?
-
-* crea una red virtual
-* tipo **bridge**
-* llamada **red_arp**
-
-Docker conectará los contenedores a esta red.
+Este comando crea una red virtual tipo **bridge** llamada **red_arp** donde se conectarán los contenedores.
 
 ---
 
-## 4. Crear los contenedores
+# Crear contenedores
 
-Ahora crearemos **dos computadores virtuales**.
-
-## Contenedor 1
+Contenedor 1:
 
 ```bash
 docker run -it --name contenedor1 --network red_arp alpine sh
 ```
 
-Esto hace:
-
-| Parte              | Significado           |
-| ------------------ | --------------------- |
-| docker run         | crear contenedor      |
-| -it                | interactivo           |
-| --name contenedor1 | nombre                |
-| --network red_arp  | conectarlo a la red   |
-| alpine             | sistema Linux pequeño |
-| sh                 | abrir terminal        |
-
-Si no tienes Alpine:
-
-**Docker lo descargará automáticamente.**
-
----
-
-## Contenedor 2
-
-Abre **otra terminal nueva** y ejecuta:
+Contenedor 2:
 
 ```bash
 docker run -it --name contenedor2 --network red_arp alpine sh
@@ -205,176 +237,116 @@ docker run -it --name contenedor2 --network red_arp alpine sh
 
 <img width="921" height="733" alt="image" src="https://github.com/user-attachments/assets/e0ec4a24-4f1b-46b3-9dff-5a769105cd30" />
 
-
-Ahora tendrás **dos terminales abiertas**:
+Ahora se tendrán dos terminales abiertas:
 
 Terminal 1 → contenedor1
 Terminal 2 → contenedor2
 
 ---
 
-## 5. Instalar herramientas dentro de los contenedores
+# Instalar herramientas
 
-Dentro de **cada contenedor** instala herramientas.
-
-Ejecuta:
+Dentro de cada contenedor ejecutar:
 
 ```bash
 apk add arping
 ```
 
-y luego:
-
 ```bash
 apk add iputils
 ```
 
-<img width="921" height="946" alt="image" src="https://github.com/user-attachments/assets/2d78b7eb-e43e-4ae2-b8c8-88a3728b85f0" />
-
-
-Esto instala:
-
-| herramienta | para qué sirve      |
+| Herramienta | Uso                 |
 | ----------- | ------------------- |
 | arping      | enviar paquetes ARP |
 | ping        | probar conectividad |
 
-Hazlo **en ambos contenedores**.
-
 ---
 
-## 6. Ver la IP de cada contenedor
-
-En **contenedor1** escribe:
+# Obtener direcciones IP
 
 ```bash
 ip addr show
 ```
 
-Verás algo como:
+Ejemplo:
 
-```
-inet 172.18.0.2/16
-```
-
----
-
-Ahora en **contenedor2**:
-
-```bash
-ip addr show
-```
-
-Verás algo como:
-
-```
-inet 172.18.0.3/16
-```
-
-Ejemplo típico:
-
-| contenedor  | IP         |
+| Contenedor  | IP         |
 | ----------- | ---------- |
 | contenedor1 | 172.18.0.2 |
 | contenedor2 | 172.18.0.3 |
 
 ---
 
-## 7. Limpiar la caché ARP
-
-Antes de probar debemos **borrar la caché ARP** para forzar la consulta.
-
-En el **host (tu computadora)** ejecuta:
+# Limpiar caché ARP
 
 ```bash
 sudo ip neigh flush all
 ```
 
-Esto elimina registros ARP guardados.
-
 ---
 
-## 8. Preparar Wireshark
+# Preparar Wireshark
 
-Abre Wireshark como administrador:
+Abrir Wireshark como administrador:
 
 ```bash
 sudo wireshark
 ```
 
+Aplicar el filtro:
+
+```
+arp
+```
+
 <img width="921" height="481" alt="image" src="https://github.com/user-attachments/assets/b37ad1eb-7d3a-41ff-83c4-b02a0ce9a0de" />
-
-
-## ¿Quién envía la trama ARP?
-
-La envía **contenedor1**, porque es quien necesita conocer la MAC.
-
-Ejemplo:
-
-| campo       | valor             |
-| ----------- | ----------------- |
-| IP origen   | 172.18.0.2        |
-| MAC origen  | MAC contenedor1   |
-| MAC destino | ff:ff:ff:ff:ff:ff |
 
 ---
 
-## ¿A qué MAC va dirigido el ARP Request?
+# Análisis del protocolo ARP
 
-Va dirigido a:
+### ¿Quién envía la trama ARP?
+
+La envía **contenedor1**, porque necesita conocer la MAC de contenedor2.
+
+MAC destino:
 
 ```
 ff:ff:ff:ff:ff:ff
 ```
 
-Esto es **broadcast**.
-
-Significa que **todos los dispositivos de la red reciben el mensaje**.
+Esto corresponde a **broadcast**.
 
 ---
 
-## ¿El ARP Reply es broadcast o unicast?
+### ¿El ARP Reply es broadcast o unicast?
 
-El **ARP Reply es unicast**.
-
-Porque contenedor2 responde **solo al contenedor1**.
-
-Destino:
-
-```
-MAC de contenedor1
-```
+El **ARP Reply es unicast**, porque contenedor2 responde directamente al contenedor1.
 
 ---
 
-## ¿Por qué es necesario ARP?
+### ¿Por qué es necesario ARP?
 
-Porque en una red:
+Porque las aplicaciones usan direcciones **IP**, pero los dispositivos de red envían datos utilizando direcciones **MAC**.
 
-* los paquetes IP necesitan enviarse usando **direcciones MAC**
-* pero las aplicaciones solo conocen **direcciones IP**
-
-Entonces ARP hace la traducción:
+ARP permite traducir:
 
 ```
-IP  →  MAC
+IP → MAC
 ```
 
 ---
 
-## ¿Qué se guarda en la caché ARP?
+# Caché ARP
 
-Después del intercambio se guarda una tabla como esta:
+Después del intercambio se guarda una tabla como:
 
 | IP         | MAC               |
 | ---------- | ----------------- |
 | 172.18.0.3 | 02:42:ac:12:00:03 |
 
-Esto permite que en el futuro **no tenga que preguntar otra vez**.
-
----
-
-Puedes verla con:
+Ver tabla con:
 
 ```bash
 arp -a
@@ -388,227 +360,118 @@ ip neigh
 
 ---
 
-## Resumen punto 2 
-Paso 1: Crear una red bridge personalizada en Docker
-Primero se crea una red virtual tipo bridge donde se conectarán los contenedores.
+# 📊 PUNTO 3 — Latencia y Jitter
 
-Comando utilizado:
-docker network create --driver bridge red_arp
+## Preparación
 
-Este comando crea una red llamada red_arp, permitiendo que varios contenedores se comuniquen entre sí como si estuvieran en la misma red local.
+Abrir Wireshark y aplicar filtro:
 
-Paso 2: Crear los contenedores
-Luego se crean dos contenedores interactivos utilizando la imagen Alpine Linux, la cual es una imagen muy liviana.
+```
+icmp
+```
 
-Comandos utilizados:
+---
 
-docker run -it --name contenedor1 --network red_arp alpine sh
+# Prueba sin perturbación
 
-En otra terminal:
-
-docker run -it --name contenedor2 --network red_arp alpine sh
-
-Con estos comandos se crean dos contenedores llamados contenedor1 y contenedor2, ambos conectados a la red red_arp.
-
-Paso 3: Instalar herramientas necesarias
-Dentro de cada contenedor se instalaron herramientas necesarias para realizar pruebas de red.
-
-apk add arping
-apk add iputils
-
-Estas herramientas permiten generar paquetes ARP y realizar pruebas de conectividad con ping.
-
-Paso 4: Preparación de Wireshark
-1. Abrir Wireshark con permisos de administrador:
-sudo wireshark
-
-2. Seleccionar la interfaz docker0 o la interfaz bridge principal de Docker.
-
-3. Aplicar el filtro:
-arp
-
-Esto permitirá observar únicamente los paquetes ARP que circulan por la red.
-
-Paso 5: Obtener las direcciones IP de los contenedores
-Dentro de cada contenedor ejecutar:
-
-ip addr show
-
-Ejemplo de direcciones obtenidas:
-
-Contenedor1: 172.17.0.2
-Contenedor2: 172.17.0.3
-
-Paso 6: Limpiar la caché ARP
-Antes de iniciar la prueba se limpia la caché ARP del host para forzar una nueva resolución.
-
-sudo ip neigh flush all
-
-Paso 7: Iniciar captura en Wireshark
-En Wireshark iniciar la captura con el filtro:
-
-arp
-
-De esta forma solo se capturarán los paquetes relacionados con el protocolo ARP.
-
-Paso 8: Realizar comunicación entre contenedores
 Desde contenedor1 ejecutar:
 
-ping -c 3 172.17.0.3
-
-Cuando se ejecuta este comando:
-
-1. Contenedor1 necesita conocer la MAC de contenedor2.
-2. Envía una solicitud ARP (ARP Request).
-3. Contenedor2 responde con un ARP Reply indicando su dirección MAC.
-Análisis de los paquetes ARP
-En Wireshark se observan dos tipos de mensajes:
-
-ARP Request:
-Mensaje enviado en broadcast preguntando quién tiene la IP 172.17.0.3.
-
-ARP Reply:
-Respuesta enviada por contenedor2 indicando su dirección MAC.
-
-Análisis – Protocolo ARP (Respuestas)
-
-1. ¿Quién envía la trama ARP? (Dirección MAC de origen y destino)
-La trama ARP es enviada por contenedor1, ya que es el dispositivo que necesita conocer la dirección MAC del otro contenedor para poder comunicarse.
-
-MAC de origen: corresponde a la dirección MAC de contenedor1.
-MAC de destino: ff:ff:ff:ff:ff:ff, que es una dirección broadcast. Esto significa que el mensaje se envía a todos los dispositivos de la red para preguntar quién tiene la IP solicitada.
-
-2. Solicitud ARP: “Who has 172.17.0.3? Tell 172.17.0.2”. ¿A qué dirección MAC va dirigido?
-La solicitud ARP se envía a la dirección MAC:
-
-ff:ff:ff:ff:ff:ff
-
-Esta es una dirección broadcast, por lo que el mensaje es recibido por todos los dispositivos de la red. El dispositivo que tenga la dirección IP 172.17.0.3 será el encargado de responder.
-
-3. Respuesta ARP: “172.17.0.3 is at <MAC_del_contenedor2>”. ¿Es broadcast o unicast?
-La respuesta ARP es un mensaje unicast.
-
-Esto significa que la respuesta se envía directamente al dispositivo que realizó la solicitud, en este caso contenedor1.
-
-Origen: contenedor2
-Destino: contenedor1
-
-4. ¿Por qué es necesario ARP? ¿Qué información se almacena en la caché ARP?
-El protocolo ARP es necesario porque permite relacionar una dirección IP con una dirección MAC dentro de una red local.
-
-Cuando un dispositivo quiere comunicarse con otro dentro de la misma red, necesita conocer su dirección MAC para poder enviar los paquetes correctamente.
-
-Después de realizar el intercambio ARP, se guarda en la caché ARP una tabla con la relación entre:
-
-• Dirección IP
-• Dirección MAC
-
-Por ejemplo:
-
-IP: 172.17.0.3
-MAC: MAC del contenedor2
-
-Esto permite que futuras comunicaciones se realicen más rápido sin necesidad de volver a enviar una solicitud ARP.
-
-# PUNTO 3
-
-Escenario
-Se utilizará la misma red y contenedores creados en el ejercicio anterior:
-
-Red Docker: red_arp
-Contenedores: contenedor1 y contenedor2
-
-Ambos deben poder comunicarse entre sí mediante el comando ping.
-Preparación de Wireshark
-1. Abrir Wireshark con permisos de administrador.
-2. Seleccionar la interfaz llamada docker0.
-3. Aplicar el filtro de captura:
-
-icmp
-
-Esto permitirá observar únicamente los paquetes ICMP generados por el comando ping.
-Procedimiento sin perturbación
-1. Iniciar la captura en Wireshark.
-2. Desde contenedor1 ejecutar el siguiente comando:
-
+```bash
 ping -c 10 172.17.0.3
+```
 
-3. Este comando envía 10 paquetes ICMP al contenedor2.
-4. Cada solicitud enviada se llama Echo Request y cada respuesta recibida Echo Reply.
-5. Detener la captura después de que finalicen los 10 paquetes.
-Análisis de paquetes ICMP
-En Wireshark se pueden observar los paquetes ICMP capturados.
+Esto genera paquetes:
 
-Cada paquete tiene un número de secuencia y un tiempo de respuesta. 
-El tiempo entre el Echo Request y el Echo Reply corresponde al RTT (Round Trip Time).
+* Echo Request
+* Echo Reply
 
-Esta información se puede observar directamente en la columna llamada "Time" dentro de Wireshark.
+Permitiendo medir el **RTT (Round Trip Time)**.
 
-A partir de estos valores se puede calcular el RTT promedio y verificar si existe variación entre los tiempos de respuesta.
-Introducción de jitter (perturbación)
-Para simular variaciones en la red se introduce un retraso artificial usando la herramienta tc.
+---
+
+# Introducir jitter
 
 En el host ejecutar:
 
+```bash
 sudo tc qdisc add dev docker0 root netem delay 50ms 20ms distribution normal
+```
 
-Este comando añade:
-- Un retardo promedio de 50 ms
-- Una variación de 20 ms (jitter) en el tráfico que pasa por la interfaz docker0.
-Prueba con perturbación
-Después de aplicar la perturbación se vuelve a ejecutar la prueba de conectividad.
+Esto añade:
 
-Desde contenedor1 ejecutar:
+* 50 ms de latencia
+* 20 ms de variación en el tráfico
 
+---
+
+# Prueba con perturbación
+
+```bash
 ping -c 20 172.17.0.3
+```
 
-Mientras se ejecuta el ping se debe iniciar nuevamente la captura en Wireshark para observar los nuevos paquetes ICMP con variación en los tiempos de respuesta.
-Eliminar la configuración de jitter
-Después de terminar la prueba se debe eliminar la configuración aplicada con tc ejecutando:
+Ahora los tiempos de respuesta tendrán mayor variación.
 
+---
+
+# Eliminar configuración
+
+```bash
 sudo tc qdisc del dev docker0 root
-Análisis y respuestas
-1. Comparar los RTT de las dos capturas
+```
 
-En la primera captura (sin perturbación) los valores de RTT son más estables y tienen poca variación.
+---
 
-En la segunda captura, después de aplicar el comando tc, se observa una mayor variabilidad en los tiempos de respuesta. Esto ocurre porque se introdujo un retraso artificial con jitter, lo que provoca que cada paquete tenga un tiempo diferente.
+# Análisis
 
-Por lo tanto, sí se observa una mayor variabilidad en la segunda captura.
+### Comparación de RTT
 
-2. Cálculo del jitter
+| Escenario        | Resultado       |
+| ---------------- | --------------- |
+| Sin perturbación | RTT estable     |
+| Con jitter       | mayor variación |
 
-El jitter se puede calcular como la diferencia entre los tiempos RTT consecutivos.
+---
 
-Por ejemplo:
-RTT1 = 1.2 ms
-RTT2 = 1.8 ms
+# Conceptos
 
-Jitter = |RTT2 - RTT1| = 0.6 ms
+### Latencia
 
-Esto permite medir cuánto varía el tiempo de respuesta entre paquetes consecutivos.
+La latencia es el tiempo que tarda un paquete en viajar desde el origen hasta el destino y regresar.
 
-3. Explicación de latencia y jitter
+Puede ser causada por:
 
-Latencia:
-La latencia es el tiempo que tarda un paquete en viajar desde el origen hasta el destino y regresar nuevamente. En redes se mide normalmente usando el RTT obtenido con el comando ping.
+* distancia entre dispositivos
+* congestión de red
+* procesamiento en routers
+* calidad de la conexión
 
-Factores que pueden causar latencia:
-- Distancia entre dispositivos
-- Congestión de red
-- Procesamiento en routers o switches
-- Calidad de la conexión
+---
 
-Jitter:
-El jitter es la variación en el tiempo de llegada de los paquetes. Esto significa que algunos paquetes pueden tardar más o menos tiempo que otros.
+### Jitter
 
-El jitter es especialmente importante en aplicaciones en tiempo real como:
-- VoIP (llamadas por internet)
-- Videollamadas
-- Juegos en línea
+El jitter es la variación en el tiempo de llegada de los paquetes.
 
-Si el jitter es muy alto, la comunicación puede presentar cortes, retrasos o pérdida de calidad en audio y video.
+Es especialmente importante en aplicaciones como:
 
+* VoIP
+* videollamadas
+* juegos en línea
+
+Si el jitter es alto puede causar cortes, retrasos o pérdida de calidad en audio y video.
+
+---
+
+# Conclusión
+
+En este laboratorio se logró:
+
+* Utilizar **Docker para simulaciones de red**
+* Implementar **ROS y Gazebo para robótica**
+* Analizar el **protocolo ARP con Wireshark**
+* Evaluar **latencia y jitter en redes**
+
+Estos experimentos permiten comprender mejor cómo se comunican los dispositivos dentro de una red y cómo factores como la latencia y el jitter pueden afectar el rendimiento de las aplicaciones.
 
 
 
