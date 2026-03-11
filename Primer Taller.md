@@ -1,7 +1,9 @@
 # Título de su Informe
 
 **Autores:** Valentina Diaz, Yon Valdez y Oscar Rada
+
 **Fecha:** 5 de marzo de 2026
+
 **Materia / Proyecto:** Comnutacion y Teletrafico
 
 ---
