@@ -8,14 +8,90 @@
 
 ---
 <img width="921" height="274" alt="image" src="https://github.com/user-attachments/assets/a8266609-62ed-46aa-ba74-d11c866d6e41" />
+¿Qué sucede?
+
+docker run: ejecuta un contenedor.
+
+--rm: elimina el contenedor automáticamente cuando termina.
+
+-it: modo interactivo en la terminal.
+
+wernight/funbox: imagen de Docker que contiene varias herramientas.
+
+cvlc: versión de VLC para línea de comandos.
+
+--no-audio: reproduce el video sin sonido.
+
+-V caca: usa el driver de video ASCII "caca".
+
+/examples/countdown.mp4: video de ejemplo dentro del contenedor.
+
+✅ Resultado:
+En la terminal aparece un video de cuenta regresiva reproducido con caracteres ASCII (letras y símbolos), como si fuera una animación hecha con texto.
 <img width="921" height="508" alt="image" src="https://github.com/user-attachments/assets/ea218fc3-97b2-4a47-a6fc-bcce0c641396" />
+¿Qué sucede?
+
+docker pull: descarga una imagen desde Docker Hub.
+
+osrf/ros: imagen oficial de ROS (Robot Operating System).
+
+noetic-desktop-full: versión completa que incluye herramientas gráficas y simuladores.
+
+✅ Resultado:
+Se descarga una imagen de Docker que contiene ROS Noetic y herramientas completas para robótica, incluyendo integración con Gazebo, que permite simular robots en un entorno virtual.
 <img width="921" height="503" alt="image" src="https://github.com/user-attachments/assets/c6b14b8f-5934-49a2-8788-42cd056a36a2" />
+En este paso se crea un Dockerfile llamado Dockerfile-ros que usa la imagen base de ROS Noetic. Luego instala los paquetes necesarios para TurtleBot3 y sus simulaciones, configura el modelo del robot Burger, y finalmente ejecuta un comando que inicia ROS junto con Gazebo para cargar la simulación del robot en un mundo virtual.
 <img width="921" height="506" alt="image" src="https://github.com/user-attachments/assets/4e88af04-0811-4731-aec9-2c04969bbd53" />
 <img width="1360" height="404" alt="image" src="https://github.com/user-attachments/assets/a457bbda-a5ee-44a4-8636-26c192e399e7" />
 <img width="1365" height="721" alt="image" src="https://github.com/user-attachments/assets/3dca498a-df41-46d1-b7cf-4403ffd3dead" />
+Primero se usa:
+
+docker build -t ros-gazebo -f Dockerfile-ros .
+
+Este comando construye una imagen de Docker usando el archivo Dockerfile-ros y la guarda con el nombre ros-gazebo.
+
+Luego se ejecuta:
+
+docker run -it --rm \
+--env="DISPLAY" \
+--volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+ros-gazebo
+
+Este comando ejecuta el contenedor creado, permite usar la interfaz gráfica del sistema (DISPLAY) y comparte el sistema gráfico de Linux para que Gazebo pueda abrir su ventana de simulación.
+El contenedor se elimina automáticamente al cerrarse (--rm).
 <img width="1341" height="681" alt="image" src="https://github.com/user-attachments/assets/752974f1-9094-4473-be19-a6cae1178af4" />
+¿Qué sucede en este paso?
+
+En este paso se crea un Dockerfile que prepara un entorno de ROS Noetic con TurtleBot3, LIDAR y SLAM.
+
+El archivo instala los paquetes necesarios como:
+
+turtlebot3
+
+turtlebot3-simulations
+
+slam-gmapping
+
+Luego configura el modelo del robot TurtleBot3 Burger y define un comando que inicia ROS y Gazebo.
+
+✅ Resultado:
+Cuando se ejecute el contenedor, se abrirá la simulación del robot TurtleBot3 con LIDAR en Gazebo, permitiendo usar SLAM para generar un mapa del entorno en tiempo real.
 <img width="1186" height="657" alt="image" src="https://github.com/user-attachments/assets/4a807a0f-cf75-415f-8217-136f57338efe" />
 <img width="1305" height="406" alt="image" src="https://github.com/user-attachments/assets/76e305ac-e029-495d-bb72-de1febf5c4c6" />
+En este paso se inicia el contenedor con la simulación del robot.
+Primero se abre Gazebo con el robot TurtleBot3. Luego, en otras terminales del mismo contenedor, se ejecutan:
+
+SLAM (gmapping) para que el robot use el LIDAR y construya un mapa del entorno.
+
+Teleoperación para controlar el robot con el teclado y moverlo por el escenario.
+
+✅ Resultado: el robot se puede mover en la simulación mientras el sistema SLAM crea el mapa en tiempo real.
+
+En este paso se abre RViz en otra terminal del contenedor.
+
+RViz permite visualizar el mapa que el robot está generando con el LIDAR mientras se mueve en la simulación.
+
+✅ Resultado: se puede ver el mapa del entorno formándose en tiempo real a medida que el robot explora el espacio.
 
 Gif 1 punto 
 
