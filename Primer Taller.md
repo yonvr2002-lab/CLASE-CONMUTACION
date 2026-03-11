@@ -22,8 +22,295 @@ https://github.com/user-attachments/assets/867a8301-464d-4861-a8fd-558c16ec2516
 
 
 
-PUNTO 2
+# PUNTO 2
 
+---
+
+##  1. ¿Qué vamos a demostrar?
+
+Cuando un dispositivo quiere comunicarse con otro en la misma red:
+
+1️. Conoce la **IP** del otro dispositivo
+
+2️. Pero **no conoce su dirección MAC**
+
+3️. Entonces usa **ARP (Address Resolution Protocol)** para preguntarle a la red:
+
+> “¿Quién tiene esta IP?”
+
+El dispositivo con esa IP responde:
+
+> “Yo tengo esa IP, mi MAC es esta”.
+
+Esto es exactamente lo que vamos a **ver en Wireshark**.
+
+---
+
+## 2. Antes de empezar
+
+Se Debe tener instalado:
+
+* **Docker**
+* **Wireshark**
+* **Linux o WSL**
+
+Verifica Docker:
+
+```bash
+docker --version
+```
+
+Verifica Wireshark:
+
+```bash
+wireshark
+```
+
+---
+
+## 3. Crear la red Docker
+
+Primero crearemos una red virtual donde estarán los contenedores.
+
+Ejecuta en la terminal:
+
+```bash
+docker network create --driver bridge red_arp
+```
+<img width="921" height="946" alt="image" src="https://github.com/user-attachments/assets/3749bfad-b649-4105-aa05-b17cd7f173c4" />
+
+
+### ¿Qué hace esto?
+
+* crea una red virtual
+* tipo **bridge**
+* llamada **red_arp**
+
+Docker conectará los contenedores a esta red.
+
+---
+
+## 4. Crear los contenedores
+
+Ahora crearemos **dos computadores virtuales**.
+
+## Contenedor 1
+
+```bash
+docker run -it --name contenedor1 --network red_arp alpine sh
+```
+
+Esto hace:
+
+| Parte              | Significado           |
+| ------------------ | --------------------- |
+| docker run         | crear contenedor      |
+| -it                | interactivo           |
+| --name contenedor1 | nombre                |
+| --network red_arp  | conectarlo a la red   |
+| alpine             | sistema Linux pequeño |
+| sh                 | abrir terminal        |
+
+Si no tienes Alpine:
+
+**Docker lo descargará automáticamente.**
+
+---
+
+## Contenedor 2
+
+Abre **otra terminal nueva** y ejecuta:
+
+```bash
+docker run -it --name contenedor2 --network red_arp alpine sh
+```
+
+<img width="921" height="733" alt="image" src="https://github.com/user-attachments/assets/e0ec4a24-4f1b-46b3-9dff-5a769105cd30" />
+
+
+Ahora tendrás **dos terminales abiertas**:
+
+Terminal 1 → contenedor1
+Terminal 2 → contenedor2
+
+---
+
+## 5. Instalar herramientas dentro de los contenedores
+
+Dentro de **cada contenedor** instala herramientas.
+
+Ejecuta:
+
+```bash
+apk add arping
+```
+
+y luego:
+
+```bash
+apk add iputils
+```
+
+<img width="921" height="946" alt="image" src="https://github.com/user-attachments/assets/2d78b7eb-e43e-4ae2-b8c8-88a3728b85f0" />
+
+
+Esto instala:
+
+| herramienta | para qué sirve      |
+| ----------- | ------------------- |
+| arping      | enviar paquetes ARP |
+| ping        | probar conectividad |
+
+Hazlo **en ambos contenedores**.
+
+---
+
+## 6. Ver la IP de cada contenedor
+
+En **contenedor1** escribe:
+
+```bash
+ip addr show
+```
+
+Verás algo como:
+
+```
+inet 172.18.0.2/16
+```
+
+---
+
+Ahora en **contenedor2**:
+
+```bash
+ip addr show
+```
+
+Verás algo como:
+
+```
+inet 172.18.0.3/16
+```
+
+Ejemplo típico:
+
+| contenedor  | IP         |
+| ----------- | ---------- |
+| contenedor1 | 172.18.0.2 |
+| contenedor2 | 172.18.0.3 |
+
+---
+
+## 7. Limpiar la caché ARP
+
+Antes de probar debemos **borrar la caché ARP** para forzar la consulta.
+
+En el **host (tu computadora)** ejecuta:
+
+```bash
+sudo ip neigh flush all
+```
+
+Esto elimina registros ARP guardados.
+
+---
+
+## 8. Preparar Wireshark
+
+Abre Wireshark como administrador:
+
+```bash
+sudo wireshark
+```
+
+<img width="921" height="481" alt="image" src="https://github.com/user-attachments/assets/b37ad1eb-7d3a-41ff-83c4-b02a0ce9a0de" />
+
+
+## ¿Quién envía la trama ARP?
+
+La envía **contenedor1**, porque es quien necesita conocer la MAC.
+
+Ejemplo:
+
+| campo       | valor             |
+| ----------- | ----------------- |
+| IP origen   | 172.18.0.2        |
+| MAC origen  | MAC contenedor1   |
+| MAC destino | ff:ff:ff:ff:ff:ff |
+
+---
+
+## ¿A qué MAC va dirigido el ARP Request?
+
+Va dirigido a:
+
+```
+ff:ff:ff:ff:ff:ff
+```
+
+Esto es **broadcast**.
+
+Significa que **todos los dispositivos de la red reciben el mensaje**.
+
+---
+
+## ¿El ARP Reply es broadcast o unicast?
+
+El **ARP Reply es unicast**.
+
+Porque contenedor2 responde **solo al contenedor1**.
+
+Destino:
+
+```
+MAC de contenedor1
+```
+
+---
+
+## ¿Por qué es necesario ARP?
+
+Porque en una red:
+
+* los paquetes IP necesitan enviarse usando **direcciones MAC**
+* pero las aplicaciones solo conocen **direcciones IP**
+
+Entonces ARP hace la traducción:
+
+```
+IP  →  MAC
+```
+
+---
+
+## ¿Qué se guarda en la caché ARP?
+
+Después del intercambio se guarda una tabla como esta:
+
+| IP         | MAC               |
+| ---------- | ----------------- |
+| 172.18.0.3 | 02:42:ac:12:00:03 |
+
+Esto permite que en el futuro **no tenga que preguntar otra vez**.
+
+---
+
+Puedes verla con:
+
+```bash
+arp -a
+```
+
+o
+
+```bash
+ip neigh
+```
+
+---
+
+## Resumen punto 2 
 Paso 1: Crear una red bridge personalizada en Docker
 Primero se crea una red virtual tipo bridge donde se conectarán los contenedores.
 
@@ -145,7 +432,7 @@ MAC: MAC del contenedor2
 
 Esto permite que futuras comunicaciones se realicen más rápido sin necesidad de volver a enviar una solicitud ARP.
 
-PUNTO 3
+# PUNTO 3
 
 Escenario
 Se utilizará la misma red y contenedores creados en el ejercicio anterior:
