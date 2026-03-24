@@ -207,9 +207,17 @@ show standby
 192.168.1.254
 ```
 
+<img width="1158" height="633" alt="imagen" src="https://github.com/user-attachments/assets/f78244c6-dd88-4276-8f13-34841b25a028" />
+
+<img width="1059" height="374" alt="imagen" src="https://github.com/user-attachments/assets/4182eaff-a401-461b-b92d-4b2b5b99066a" />
+
+
 Verificación:
-- Ping desde PC-A y PC-C
+- Ping desde PC-A y PC-B
 - Resultado: exitoso
+
+<img width="696" height="383" alt="imagen" src="https://github.com/user-attachments/assets/e1db0627-3010-401d-ac08-3009eaf56885" />
+
 
 ---
 
@@ -219,12 +227,16 @@ Verificación:
 
 ```bash
 tracert 209.165.200.226
+
+
 ```
 
 Pregunta:  
 ¿La ruta cambia respecto a la anterior?
 
----
+<img width="532" height="610" alt="imagen" src="https://github.com/user-attachments/assets/836f1ce4-fdd3-45b2-a72f-b4a3bdf69889" />
+
+Obervamos que toma la misma ruta.
 
 ## Paso 2: Falla del router activo
 
@@ -234,7 +246,8 @@ Resultado:
 - Cambio de ruta
 - R3 asume el rol activo
 
----
+<img width="1361" height="338" alt="imagen" src="https://github.com/user-attachments/assets/85c8eb3f-6858-4560-927f-80351fb762a7" />
+
 
 ## Paso 3: Restauración
 
@@ -243,13 +256,17 @@ Se reconecta R1.
 Resultados:
 - La ruta vuelve a R1 (por preempt)
 
+<img width="1361" height="524" alt="imagen" src="https://github.com/user-attachments/assets/35730c10-0e5d-466c-a2c2-327237fbcb86" />
+
+
 Pregunta:
 ¿Qué ocurriría sin preempt?
 
+no podrian tomar el camino diferente
 Respuesta:
 R3 permanecería como router activo.
 
----
+dependeria directamente de la prioridad.
 
 # Conclusión
 
@@ -259,7 +276,8 @@ HSRP permite garantizar alta disponibilidad en la red mediante:
 - Conmutación automática ante fallos
 - Transparencia para el usuario final
 
----
+<img width="1361" height="682" alt="imagen" src="https://github.com/user-attachments/assets/bd9a755f-5744-4dea-a804-41d1f67864d8" />
+
 
 # Autor
 
